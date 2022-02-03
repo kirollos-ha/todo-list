@@ -24,18 +24,16 @@ public:
   virtual std::string get_name();
   virtual void set_name(std::string new_name);
 
-  virtual ~Task_component() = default;//TODO rivedi gli smart pointer
+  virtual ~Task_component() = default;
 private:
   //entrambi gli attributi gestiti unicamente dall'interfaccia data da Task_component
   std::string name;
   std::shared_ptr<Task_composite>parent;
   //possibile che uno stesso task come figlio di coso (con un pointer nella lista parent.children che lo indica)
   //e padre di al di altro (quindi con un pointer parent di un task che lo indica)
-  //impossibile quindi usare std::unique_ptr
+  //impossibile quindi usare std::unique_ptr per entrambi i puntatori
 };
 
-//Task_leaf non aggiunge niente all'interaccia di Task_component se non il nome
-//fare una typedef non mi sembra un'ottima idea ma ci siamo quasi
 class Task_leaf : public Task_component{
 public:
   Task_leaf();
@@ -62,7 +60,7 @@ public:
   void add(Task_component& new_child);
   void print_children();
   void release_child(std::string target_name);
-  //TODO implementa sti tre affari
+  //TODO implementare i seguenti
   //void add_leaf(std::string name);//crea leaf e la aggiunge
   //void add_composite(std::string name);//crea composite e lo aggiunge
   //void release_child(int target_index);

@@ -1,6 +1,5 @@
 #include"Task_components.h"
 
-//TODO fai che il costruttore con padre metta il nodo tra i figli del padre
 Task_component::Task_component()
 :name(""),parent(std::shared_ptr<Task_composite>(nullptr)){}
 
@@ -8,10 +7,14 @@ Task_component::Task_component(std::string name)
 :name(name),parent(std::shared_ptr<Task_composite>(nullptr)){}
 
 Task_component::Task_component(Task_composite& parent)
-:name(""),parent(std::shared_ptr<Task_composite>(&parent)){}
+:name(""),parent(std::shared_ptr<Task_composite>(&parent)){
+  parent.add(*this);
+}
 
 Task_component::Task_component(std::string name, Task_composite& parent)
-:name(name),parent(std::shared_ptr<Task_composite>(&parent)){}
+:name(name),parent(std::shared_ptr<Task_composite>(&parent)){
+  parent.add(*this);
+}
 
 void Task_component::remove(){
   parent->release_child(name);
@@ -40,7 +43,6 @@ Task_leaf::Task_leaf(Task_composite& parent)
 Task_leaf::Task_leaf(std::string name, Task_composite& parent)
 :Task_component(name,parent){}
 
-//controlla poi di aver usato la sintassi giusta
 void Task_leaf::set_name(std::string new_name){
   Task_component::set_name(new_name);
 }
@@ -84,7 +86,7 @@ void Task_composite::print_children(){
 void Task_composite::release_child(std::string target_name){
   //non passata come reference per permettere uso di rvalue costanti nei test
   for(auto it=children.begin();it!=children.end();){
-    //TODO flusso di controllo troppo complicato, semplificalo
+    //TODO flusso di controllo troppo complicato, da semplificare
     if((*it)->get_name()==target_name){
       auto to_delete = it;
       it++;
