@@ -57,7 +57,7 @@ public:
   virtual void set_name(std::string new_name)override;
   virtual void remove()override;
 
-  void add(Task_component& new_child);
+  void add(std::shared_ptr<Task_component> new_child);
   void print_children();
   void release_child(std::string target_name);
   //TODO implementare i seguenti
@@ -69,4 +69,20 @@ public:
 private:
   std::list<std::shared_ptr<Task_component>>children;
 };
+
+//agli smart pointer non piace gestire oggetti allocati staticamente, quindi
+//ecco tutti i costruttori delle classi concrete qui presenti in versione shared_ptr
+
+std::shared_ptr<Task_leaf>make_leaf();
+std::shared_ptr<Task_leaf>make_leaf(std::string name);
+std::shared_ptr<Task_leaf>make_leaf(std::shared_ptr<Task_composite>parent);
+std::shared_ptr<Task_leaf>make_leaf(std::string name,
+  std::shared_ptr<Task_composite>parent);
+
+std::shared_ptr<Task_composite>make_composite();
+std::shared_ptr<Task_composite>make_composite(std::string name);
+std::shared_ptr<Task_composite>make_composite(std::shared_ptr<Task_composite>parent);
+std::shared_ptr<Task_composite>make_composite(std::string name,
+  std::shared_ptr<Task_composite>parent);
+
 #endif

@@ -8,17 +8,17 @@ Task_component::Task_component(std::string name)
 
 Task_component::Task_component(Task_composite& parent)
 :name(""),parent(std::shared_ptr<Task_composite>(&parent)){
-  parent.add(*this);
+  parent.add(std::shared_ptr<Task_component>(this));
 }
 
 Task_component::Task_component(std::string name, Task_composite& parent)
 :name(name),parent(std::shared_ptr<Task_composite>(&parent)){
-  parent.add(*this);
+  parent.add(std::shared_ptr<Task_component>(this));
 }
 
 void Task_component::remove(){
   parent->release_child(name);
-  //TODO va comunque deallocato restano gli shared_ptr dei figli
+  delete this;
 }
 
 std::string Task_component::get_name(){
@@ -73,8 +73,8 @@ void Task_composite::remove(){
   Task_component::remove();
 }
 
-void Task_composite::add(Task_component& new_child){
-  children.push_back(std::shared_ptr<Task_component>(&new_child));
+void Task_composite::add(std::shared_ptr<Task_component>new_child){
+  children.push_back(new_child);
 }
 
 void Task_composite::print_children(){
@@ -85,16 +85,40 @@ void Task_composite::print_children(){
 
 void Task_composite::release_child(std::string target_name){
   //non passata come reference per permettere uso di rvalue costanti nei test
-  for(auto it=children.begin();it!=children.end();){
-    //TODO flusso di controllo troppo complicato, da semplificare
+  for(auto it=children.begin();it!=children.end();it++){
     if((*it)->get_name()==target_name){
-      auto to_delete = it;
-      it++;
-      children.erase(to_delete);
+      children.erase(it);
       return;
     }
-    else{
-      it++;
-    }
   }
+}
+
+//hic sunt std::smart_puntatores
+
+std::shared_ptr<Task_leaf>make_leaf(){
+  return std::make_shared<Task_leaf>();
+}
+std::shared_ptr<Task_leaf>make_leaf(std::string name){
+  return std::make_shared<Task_leaf>(name);
+}
+std::shared_ptr<Task_leaf>make_leaf(std::shared_ptr<Task_composite>parent){
+  return std::make_shared<Task_leaf>(*(parent.get()));
+}
+std::shared_ptr<Task_leaf>make_leaf(std::string name,
+  std::shared_ptr<Task_composite>parent){
+  return std::make_shared<Task_leaf>(name,*(parent.get()));
+}
+
+std::shared_ptr<Task_composite>make_composite(){
+  return std::make_shared<Task_composite>();
+}
+std::shared_ptr<Task_composite>make_composite(std::string name){
+  return std::make_shared<Task_composite>(name);
+}
+std::shared_ptr<Task_composite>make_composite(std::shared_ptr<Task_composite>parent){
+  return std::make_shared<Task_composite>(*(parent.get()));
+}
+std::shared_ptr<Task_composite>make_composite(std::string name,
+  std::shared_ptr<Task_composite>parent){
+  return std::make_shared<Task_composite>(name,*(parent.get()));
 }
