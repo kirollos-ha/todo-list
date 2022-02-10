@@ -1,0 +1,3 @@
+/home/virbonus/gratia-universitatis/todo/project/test/testbuild/CMakeFiles/rebuild_cache.dir
+/home/virbonus/gratia-universitatis/todo/project/test/testbuild/CMakeFiles/edit_cache.dir
+/home/virbonus/gratia-universitatis/todo/project/test/testbuild/CMakeFiles/testexe.dir
