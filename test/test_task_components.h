@@ -16,6 +16,7 @@ void test_task_components(){
       ass_eq("composite name number 1",composite->get_name());
       auto leaf = make_leaf("leaf name number 1");
       ass_eq("leaf name number 1",leaf->get_name());
+      std::cout<<"\n\nSTRING CONSTRUCTORS WORK!!\n\n";
     }
 
     /*
@@ -33,28 +34,16 @@ void test_task_components(){
     }
   */
 
-    test_case(can access parent pointer){
-      auto pater = make_composite("pater!");
-      auto tizio = make_composite(pater);
-      ass_t(tizio->get_parent());
-      auto caio = make_leaf(pater);
-      ass_t(caio->get_parent());
-      std::cout<<"no nome tutto a posto!\n";
-      auto sempronio = make_composite("nomen habeo", pater);
-      auto sempronia = make_leaf("ceci est une string", pater);
-      std::cout<<"idem qui\n";
-    }
-
     test_case(can access self pointer){
-      auto pater = make_composite();
+      std::cout<<"\n\nTHIS FUCKING BITCH HAS BEGUN!!\n\n";
+      auto pater = make_composite("m\'daddy");
       auto tizio = make_composite(pater);
       ass_t(tizio->get_self_ptr());
       auto caio = make_leaf(pater);
       ass_t(caio->get_self_ptr());
-      std::cout<<"no nome tutto a posto per self_ptr!\n";
       auto sempronio = make_composite("nomen habeo", pater);
       auto sempronia = make_leaf("ceci est une string", pater);
-      std::cout<<"idem qui per self_ptr\n";
+      std::cout<<"\n\nCAN ACCESS SELF POINTER!!\nNOW GOD DESTROYS DATA STRUCTURES\n\n";
     }
 
 
@@ -64,11 +53,11 @@ void test_task_components(){
       ass_eq("composite name number 2",composite->get_name());
       auto leaf = make_leaf("leaf name number 2",nameless_matriarch);
       ass_eq("leaf name number 2",leaf->get_name());
+      std::cout<<"\n\nCAN ACCESS PARENT POINTER!!\n\n";
     }
   }
 
   test_suite(test drive){
-    //init
     std::cout<<"speculum principis no habea un cazzo di principe davanti\n";
 
     auto princeps = make_composite("tanto gentile e tanto onesta pare");

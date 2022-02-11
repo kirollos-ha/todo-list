@@ -49,7 +49,10 @@ std::shared_ptr<Task_component> Task_component::get_self_ptr(){
 
 Task_component::~Task_component(){
   if(parent){
-    parent->detach_child(name);//if, altrimenti segmentation fault
+    //parent->detach_child(name);//if, altrimenti segmentation fault
+    parent->get_children()->pop_back();
+    //se viene sempre eliminata per prima l'ultima aggiunta
+    //questa cosa dovrebbe equivalere a quella sopra
   }
   parent.reset();
   self_ptr.reset();
