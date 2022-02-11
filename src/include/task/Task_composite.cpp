@@ -41,10 +41,13 @@ void Task_composite::print_children(){
 }
 
 void Task_composite::detach_child(std::string target_name){
-  //non passata come reference per permettere uso di rvalue costanti nei test
+  std::cout<<"function entrance\n";
   for(auto it=children.begin();it!=children.end();it++){
+    std::cout<<"loop iteration\n";
     if((*it)->get_name()==target_name){
+      std::cout<<"condition met, inside if statement\n";
       children.erase(it);
+      std::cout<<"thing list wabby loo remove\n";
       return;
     }
   }
@@ -52,13 +55,9 @@ void Task_composite::detach_child(std::string target_name){
 
 void Task_composite::detach_child(std::shared_ptr<Task_component> target){
   for(auto it=children.begin();it!=children.end();it++){
-    std::cout<<"I'm motivated! I'm iterating!\n";
     if((*it).get()==target.get()){//dereference allo stesso pointer = GOOD
-      std::cout<<"motherfucker was found, now destroy the target!\n";
       children.erase(it);
-      std::cout<<"target erased, it was SIIIIIIIICK, DUDE!!!!!!\n";
       return;
-      //a togliere il legame dalla parte del figlio ci pensa il figlio
     }
   }
 }
@@ -68,6 +67,7 @@ std::shared_ptr<std::list<std::shared_ptr<Task_component>>> Task_composite::get_
 }
 
 Task_composite::~Task_composite(){
+  std::cout<<"\"I am destroying this composite\" the compiler said not, for he could not speak\n";
   children.clear();
   //e coi distruttori dei figli equivale a rm -rf this (metaforicamente);
   std::cout<<"composite "<<get_name()<<" destroyed\n";

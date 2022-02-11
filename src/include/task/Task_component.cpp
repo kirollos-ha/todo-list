@@ -25,7 +25,6 @@ Task_component::Task_component(std::string name, std::shared_ptr<Task_composite>
   parent->add(self_ptr);
 }
 
-
 std::string Task_component::get_name(){
   return name;
 }
