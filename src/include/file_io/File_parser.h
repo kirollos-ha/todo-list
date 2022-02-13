@@ -18,6 +18,7 @@ public:
 private:
   std::shared_ptr<Task_composite>root;
   std::shared_ptr<Task_composite>curr_parent;
+  std::shared_ptr<Task_composite>curr_grandparent;
   //usati in: make_todo_list, compoisite_start, compoiste_end, add_leaf
 
   std::ifstream ifs;

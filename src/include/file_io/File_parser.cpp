@@ -20,15 +20,18 @@ std::shared_ptr<Task_composite> File_parser::file_to_list(char const* filepath){
   return root;
 }
 
+//TODO questa cosa non funziona, usa uno stack per tenere antenati o rimetti parent pointer
+//consiglierei lo stack
 void File_parser::composite_start(){
   std::string input;
   ifs>>input;
+  curr_grandparent = curr_parent;
   curr_parent = make_composite(input);
-  curr_parent->get_parent()->add(curr_parent);
+  curr_grandparent->add(curr_parent);
 }
 
 void File_parser::composite_end(){
-  curr_parent = curr_parent->get_parent();
+  curr_parent = curr_grandparent;
 }
 
 void File_parser::add_leaf(){
