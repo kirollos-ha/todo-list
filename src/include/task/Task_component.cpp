@@ -1,5 +1,4 @@
 #include"Task_components.h"
-//mi scuso per il tema dei commit prima non avevo capito bene gli smart pointer
 
 Task_component::Task_component()
 :name(""){};
