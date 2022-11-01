@@ -1,0 +1,8 @@
+# build directories
+/build/
+# temporary compilations (usually for testing)
+*.out
+# ide files
+# la licensa di jetbrains mi è scaduta
+# e volevo usare un ide che avrei potuto usare anche in futuro senza rinnovare una licensa
+*.kdev4
