@@ -1,0 +1,12 @@
+#+TITLE:TODO-LIST
+a simple todo list manager
+
+** Features added
+ - Create, read, and write to todo lists through a terminal interface
+ - Write and read todo lists from files
+ - Not segfaulting (beta)
+
+** Features to add
+ - A working GUI
+ - Decent documentation
+
