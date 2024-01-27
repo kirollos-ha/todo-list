@@ -1,0 +1,6 @@
+#!/usr/bin/sh
+
+# DCMAKE_EXPORT_COMPILE_COMMANDS serve per far creare a cmake
+# i file necesari per clangd
+# che è il language server (anailisi statica) che sto usando
+cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -S . -B build/ && cmake --build build/
