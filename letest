@@ -1,0 +1,17 @@
+#!/usr/bin/sh
+
+echo "cleaning"
+rm -rf test/build/*
+
+echo "compiling..."
+echo "cmake part"
+cmake -DTESTING="yes"\
+      -S . -B test/build/
+
+echo "make part"
+cmake --build test/build/
+
+echo "running"
+./test/build/testexe
+
+echo "done"

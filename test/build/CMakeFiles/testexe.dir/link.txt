@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/testexe.dir/testexe_autogen/mocs_compilation.cpp.o CMakeFiles/testexe.dir/test/test_main.cpp.o -o testexe  src/include/task/libcomp_lib.a 

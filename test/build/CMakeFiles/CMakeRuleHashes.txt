@@ -1,0 +1,7 @@
+# Hashes of file build rules.
+193e0980731cab5c5816f62a5ae04003 CMakeFiles/testexe_autogen
+06baa355ebb7c7a3468e9170bed4edc8 src/include/serializers/CMakeFiles/task_file_parser_autogen
+cb891e87e4107e55d5e5b24fe5e50540 src/include/serializers/CMakeFiles/task_serializer_autogen
+b7753950dd3e6e022510f0e9f3879ddc src/include/task/CMakeFiles/comp_lib_autogen
+9f950cf23f70e3af0d0eb77e133e5c5b src/include/ui/CMakeFiles/ui_lib_autogen
+40b2705d7a79e5b276181dec68730815 src/include/view/CMakeFiles/view_autogen

@@ -1,5 +1,5 @@
 #include "minitest.hpp"
-#include "../src/include/task/Task_components.h"
+#include "../src/include/task/all.hpp"
 
 void test_task_components(){
   test_suite(test consturction wih smart pointers){
@@ -21,13 +21,13 @@ void test_task_components(){
       auto root_task = make_composite("root task");
       auto composite = make_composite ("composite 2",root_task);
       ass_eq("composite 2",composite->get_name());
-      ass_eq("composite 2",root_task->get_children()->back()->get_name());
-      ass_eq(1,root_task->get_children()->size())
+      ass_eq("composite 2",root_task->get_children().back()->get_name());
+      ass_eq(1,root_task->get_children().size())
 
       auto leaf = make_leaf("leaf 2",root_task);
       ass_eq("leaf 2",leaf->get_name());
-      ass_eq("leaf 2",root_task->get_children()->back()->get_name());
-      ass_eq(2,root_task->get_children()->size());
+      ass_eq("leaf 2",root_task->get_children().back()->get_name());
+      ass_eq(2,root_task->get_children().size());
     }
   }
 

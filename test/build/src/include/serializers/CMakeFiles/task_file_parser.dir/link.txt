@@ -1,0 +1,2 @@
+/usr/bin/ar qc libtask_file_parser.a CMakeFiles/task_file_parser.dir/task_file_parser_autogen/mocs_compilation.cpp.o CMakeFiles/task_file_parser.dir/TaskFileParser.cpp.o
+/usr/bin/ranlib libtask_file_parser.a
