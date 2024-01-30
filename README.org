@@ -8,7 +8,7 @@ a simple todo list manager
  - sh (posix shell, linux or macos work)
 
 ** Compiling
-in the project root directory (the one you cloned with the ~.git~, run
+in the project root directory (the one you cloned with the ~.git~), run
 #+begin_src sh
 ./lebuild
 #+end_src
