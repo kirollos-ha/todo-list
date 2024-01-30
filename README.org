@@ -1,12 +1,36 @@
 #+TITLE:TODO-LIST
 a simple todo list manager
 
-** Features added
- - Create, read, and write to todo lists through a terminal interface
- - Write and read todo lists from files
- - Not segfaulting (beta)
+* Compiling and using
+** Dependencies
+ - qt5
+ - cmake
+ - sh (posix shell, linux or macos work)
 
-** Features to add
- - A working GUI
+** Compiling
+in the project root directory (the one you cloned with the ~.git~, run
+#+begin_src sh
+./lebuild
+#+end_src
+
+** Running the tests
+in the project root directory
+#+begin_src sh
+./letest
+#+end_src
+
+** Running the program
+in the project root directory
+#+begin_src sh
+./lerun
+#+end_src
+
+* Features present
+ - View and edit todo lists through a graphical user interface
+ - Read and write todo lists to and from files
+ - Not segfaulting (experimental)
+
+* Features to be added
+ - +A working GUI+ (done)
  - Decent documentation
 
