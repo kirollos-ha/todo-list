@@ -1,2 +1,0 @@
-/usr/bin/ar qc libcomp_lib.a CMakeFiles/comp_lib.dir/comp_lib_autogen/mocs_compilation.cpp.o CMakeFiles/comp_lib.dir/TaskComponent.cpp.o CMakeFiles/comp_lib.dir/TaskLeaf.cpp.o CMakeFiles/comp_lib.dir/TaskComposite.cpp.o CMakeFiles/comp_lib.dir/initializers.cpp.o
-/usr/bin/ranlib libcomp_lib.a
