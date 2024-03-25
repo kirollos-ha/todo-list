@@ -1,15 +1,10 @@
 #!/usr/bin/sh
 
-# DCMAKE_EXPORT_COMPILE_COMMANDS serve per far creare a cmake
-# i file necesari per clangd
-# che è il language server (anailisi statica) che sto usando
-
 # DTESTING è per passare al cmake se stiamo testando o no
 # non è un flag builtin di cmake, viene passato allo script così posso usarlo
 # per avere la logica di test e compilazione normale in un singolo file
 # questo evita molti più problemi di quanti ne crei
-cmake  -DCMAKE_EXPORT_COMPILE_COMMANDS=1\
-	-DTESTING="no"\
-	-S . -B build/
+cmake -DTESTING="no"\
+      -S . -B build/ 
 
 cmake --build build/

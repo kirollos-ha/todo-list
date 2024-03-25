@@ -6,14 +6,10 @@
 
 class TaskLeaf : public TaskComponent {
 public:
-    TaskLeaf();
-    explicit TaskLeaf(std::string name);
-
-    virtual std::string get_name() override;
-    virtual void set_name(std::string new_name) override;
+    explicit TaskLeaf(std::string& name, std::string& description, Date& due_date):
+        TaskComponent(name, description, due_date){}
     virtual void accept(TaskVisitor* v) override;
-
-    virtual ~TaskLeaf();
+    virtual ~TaskLeaf() override;
 };
 
 #endif

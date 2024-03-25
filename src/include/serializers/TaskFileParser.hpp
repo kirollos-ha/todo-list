@@ -15,9 +15,11 @@ public:
 private:
     std::stack<std::shared_ptr<TaskComposite>> trace;
 
-    void composite_start(std::string&);
+    void composite_start(std::istream&);
     void composite_end();
-    void add_leaf(std::string&);
+    void add_leaf(std::istream&);
+
+    Date parse_date_string(const std::string& s);
 };
 
 

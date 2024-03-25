@@ -9,7 +9,7 @@
 
 class TaskSerializer : public TaskVisitor {
 public:
-    TaskSerializer(std::ostream&);
+    TaskSerializer(std::ostream& os);
     virtual void visitLeaf(TaskLeaf*) override;
     virtual void visitComposite(TaskComposite*) override;
     virtual ~TaskSerializer();

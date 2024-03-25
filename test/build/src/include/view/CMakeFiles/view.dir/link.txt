@@ -1,0 +1,2 @@
+/usr/bin/ar qc libview.a CMakeFiles/view.dir/view_autogen/mocs_compilation.cpp.o CMakeFiles/view.dir/View.cpp.o
+/usr/bin/ranlib libview.a

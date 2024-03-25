@@ -1,0 +1,57 @@
+* Class Task
+completato non completato
+data di scadenza
+descrizione testuale (oltre al nome)
+#+begin_src c++
+  class TaskIcazzi {
+  private:
+      std::string name;
+      std::string description
+      Date data_scadenza;
+      bool is_done;
+  }
+#+end_src
+
+** Serializer
+prefisso di lunghezza per la descrizione testuale
+length delimited coding
+altrimenti la descrizione è un'altra stringa, ma più lunga, se vuoi
+getchar getchar getchar
+#+begin_export ascii
+cs roba
+roba che fa roba della roba
+10 20 30
+l foglia
+quella che sta che fa la roba che sa
+20 30 40
+ce
+#+end_export
+
+** Interfaccia
+quanti ce ne sono
+quanti completati
+cerca sottotask dato il nome (o pezzo di nome)
+
+* Gui
+non importa che sia dentro la gui
+dovrebbe essere dentro il codice
+dovrebbe essere testato
+
+* Test
+testare ricerca di oggetto presente
+non presente
+quanti sono da completare
+testa quanti sono da completare
+
+lo unit testing che gira
+
+* Poi
+segnati al prossimo appello
+
+* Debug
+vedi se il bug può essere causato dal fatto che prendano tutti la stessa stringa
+vedi qual'è l'indirizzo della stringa che viene cambiata
+
+il debug meglio se lo fai dalla console di kdevelp che mi sa meglio
+
+se metti un task dal codice e non dalla gui non riporta il comportamento borg, il comportamento borg potrebbe essere dovuto a qualche cosa riguardante la gui

@@ -1,7 +1,6 @@
 #!/usr/bin/sh
 
-echo "cleaning"
-rm -rf test/build/*
+[[ "$1" == "noclean" ]] || (echo "cleaning" && rm -rf test/build/*)
 
 echo "compiling..."
 echo "cmake part"

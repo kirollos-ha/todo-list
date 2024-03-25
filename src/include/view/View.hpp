@@ -10,6 +10,8 @@
 #include <QTableWidget>
 #include <QString>
 #include <QLabel>
+#include <QCalendarWidget>
+#include <QErrorMessage>
 
 #include "../ui/TaskClient.hpp"
 
@@ -18,29 +20,41 @@ class ListView : public QMainWindow
     Q_OBJECT
 
 public:
-    ListView(TaskClient* tc, QWidget *parent = nullptr);
+    ListView(TaskClient* tc, QWidget *parent=nullptr);
     ~ListView();
 
 private:
     QPushButton* add_leaf_button;
     QPushButton* add_composite_button;
+
     QPushButton* delete_button;
-    QPushButton* edit_button;
+
+    QPushButton* edit_name_button;
+    QPushButton* edit_description_button;
+    QPushButton* edit_date_button;
+
+    QPushButton* mark_done_button;
 
     QPushButton* move_to_button;
     QPushButton* move_up_button;
 
     QPushButton* quit_button;
     QPushButton* save_and_quit_button;
-    
 
-    QLineEdit* line;
-    QTableWidget* table;
+    QLabel* task_count_label;
+    
+    QLineEdit* task_name;
+    QLineEdit* task_description;
+    QCalendarWidget* task_date_selection;
+    QTableWidget* task_display_table;
 
     TaskClient* client;
+    QErrorMessage* error;
     // init
     void create_widgets();
+    void create_other();
     void configure_widgets();
+    void configure_other();
     void lay_widgets_out();
     void connect_slots();
     
@@ -51,8 +65,12 @@ private slots:
     // update slots
     void on_add_leaf_clicked();
     void on_add_composite_clicked();
+    
     void on_delete_clicked();
-    void on_edit_clicked();
+
+    void on_edit_name_clicked();
+    void on_edit_description_clicked();
+    void on_edit_date_clicked();
 
     void on_move_to_clicked();
     void on_move_up_clicked();

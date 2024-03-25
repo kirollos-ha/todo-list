@@ -1,2 +1,2 @@
 #!/usr/bin/sh
-./build/mvc
+./build/todo

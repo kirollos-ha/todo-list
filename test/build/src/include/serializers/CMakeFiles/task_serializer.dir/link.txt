@@ -1,0 +1,2 @@
+/usr/bin/ar qc libtask_serializer.a CMakeFiles/task_serializer.dir/task_serializer_autogen/mocs_compilation.cpp.o CMakeFiles/task_serializer.dir/TaskSerializer.cpp.o
+/usr/bin/ranlib libtask_serializer.a

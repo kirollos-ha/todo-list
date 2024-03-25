@@ -4,27 +4,25 @@
 #include<string>
 #include<memory>
 #include<vector>
+#include <optional>
 #include "TaskComponent.hpp"
 
 class TaskComposite : public TaskComponent {
 public:
-    TaskComposite();
-    TaskComposite(std::string name);
+    explicit TaskComposite(std::string& name, std::string& description, Date& due_date):
+        TaskComponent(name, description, due_date){}
 
-    virtual std::string get_name() override;
-    virtual void set_name(std::string new_name) override;
     virtual void accept(TaskVisitor* v) override ;
 
     void add(std::shared_ptr<TaskComponent> new_child);
 
     void detach_child(int index);
-    void detach_child(std::string target_name);
     void detach_child(std::shared_ptr<TaskComponent>);
 
-    std::vector<std::shared_ptr<TaskComponent>> get_children();
+    const std::vector<std::shared_ptr<TaskComponent>> get_children() const;
+    std::shared_ptr<TaskComponent> get_child(int index) const;
 
-    std::shared_ptr<TaskComponent> find_child(std::string name);
-    std::shared_ptr<TaskComponent> get_child(int index);
+    std::optional<std::shared_ptr<TaskComponent>> find_descendant(std::string& target);
 
     virtual ~TaskComposite();
 private:

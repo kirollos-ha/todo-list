@@ -6,51 +6,55 @@
 #include"TaskFileParser.hpp"
 #include"../task/initializers.hpp"
 
-std::pair<std::string,std::string> split(std::string& s, char c) {
-    int i = 0;
-    while(i<s.length() && s[i] != c) {
-        ++i;
-    } 
-    if(i == s.length()) {
-        return std::make_pair(s, "");
-    }
-    return std::make_pair(s.substr(0, i), s.substr(i+1));
-}
-
 std::shared_ptr<TaskComposite> TaskFileParser::read(std::istream& ifs) {
-    auto base = make_composite("");
+    std::string root_name="root", root_desc="root node";
+    Date d = Date::from(1,1,1970);
+    auto base = make_root_composite(root_name, root_desc, d);
     trace.push(base);
 
-    std::string line;
-    int i = 0;
-    while(std::getline(ifs, line)) {
-        auto command = split(line, ' ');
-
-        std::string op = command.first;
-        if(op == "cs") { // composite start
-            composite_start(command.second);
+    std::string cmd;
+    while(std::getline(ifs, cmd)) {
+        if(cmd == "cs") { // composite start
+            composite_start(ifs);
         }
-        else if(op == "ce") { // composite end
+        if(cmd == "ce") {
             composite_end();
         }
-        else if(op == "l") { // leaf
-            add_leaf(command.second);
+        else if(cmd == "l") { // leaf
+            add_leaf(ifs);
         }
     }
     return std::dynamic_pointer_cast<TaskComposite>(base->get_child(0));
-
 }
 
-void TaskFileParser::composite_start(std::string& name) {
-    auto new_task = make_composite(name);
-    trace.top()->add(new_task);
-    trace.push(new_task);
+void TaskFileParser::composite_start(std::istream& ifs) {
+    std::string name, date_str, description;
+    std::getline(ifs, name);
+    std::getline(ifs, date_str);
+    std::getline(ifs, description);
+    Date date = parse_date_string(date_str);
+
+    auto comp = make_composite(name, description, date, trace.top());
+    trace.push(comp);
 }
 
 void TaskFileParser::composite_end() {
     trace.pop();
 }
 
-void TaskFileParser::add_leaf(std::string& name) {
-    trace.top()->add(make_leaf(name));
+void TaskFileParser::add_leaf(std::istream& ifs) {
+    std::string name, date_str, description;
+    std::getline(ifs, name);
+    std::getline(ifs, date_str);
+    std::getline(ifs, description);
+    Date date = parse_date_string(date_str);
+
+    make_leaf(name, description, date, trace.top());
+}
+
+Date TaskFileParser::parse_date_string(const std::string& s) {
+    std::stringstream ss(s);
+    int year, month, day;
+    ss >> year >> month >> day;
+    return Date::from(day, month, year);
 }

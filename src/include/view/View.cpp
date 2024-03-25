@@ -2,28 +2,48 @@
 #include <iostream>
 
 #include <QApplication>
+#include <QApplication>
 #include <QTableWidgetItem>
 #include <memory>
 #include <qboxlayout.h>
+#include <qerrormessage.h>
+#include <qlabel.h>
+#include <qpushbutton.h>
 #include <qtablewidget.h>
-#include "View.hpp"
-#include "TaskSerializer.hpp"
 
-ListView::ListView(TaskClient* tc, QWidget *parent) :
-    client(tc), QMainWindow(parent)
+#include "View.hpp"
+#include "TableRenderer.hpp"
+#include "../task/TaskCounter.hpp"
+// #include "TaskSerializer.hpp"
+
+ListView::ListView(TaskClient* client, QWidget *parent)
+    :QMainWindow(parent), client(client)
 {
     create_widgets();
+    create_other();
     configure_widgets();
+    configure_other();
     connect_slots();
-
     sync_with_model();
+}
+
+void ListView::create_other() {
+    error = new QErrorMessage(this);
+}
+
+void ListView::configure_other() {
+    return; // al momento niente
 }
 
 void ListView::create_widgets() {
     add_leaf_button = new QPushButton("add leaf", this);
     add_composite_button = new QPushButton("add composite", this);
     delete_button = new QPushButton("delete", this);
-    edit_button = new QPushButton("edit cell", this);
+
+    edit_name_button = new QPushButton("change name", this);
+    edit_description_button = new QPushButton("change description", this);
+    edit_date_button = new QPushButton("change date", this);
+    mark_done_button = new QPushButton("mark done", this);
 
     move_to_button = new QPushButton("move to", this);
     move_up_button = new QPushButton("move up", this);
@@ -31,37 +51,48 @@ void ListView::create_widgets() {
     quit_button = new QPushButton("quit", this);
     save_and_quit_button = new QPushButton("save and quit", this);
 
-    table = new QTableWidget();
-    line = new QLineEdit(this);
+    task_count_label = new QLabel("", this);
+
+    task_display_table = new QTableWidget(this);
+    task_name = new QLineEdit(this);
+    task_description = new QLineEdit(this);
+    task_date_selection = new QCalendarWidget(this);
 }
 
 void ListView::configure_widgets() {
     lay_widgets_out();
-
-    table->setColumnCount(1);
+    task_display_table->setColumnCount(3);
 }
 
 void ListView::lay_widgets_out() {
-    QHBoxLayout* upper = new QHBoxLayout(this);
+    QHBoxLayout* upper = new QHBoxLayout();
     upper->addWidget(add_leaf_button);
     upper->addWidget(add_composite_button);
-    upper->addWidget(edit_button);
-    upper->addWidget(line);
+    upper->addWidget(edit_name_button);
+    upper->addWidget(task_name);
     upper->addWidget(delete_button);
     upper->addWidget(move_to_button);
     upper->addWidget(move_up_button);
 
-    QHBoxLayout* quitter = new QHBoxLayout(this);
-    quitter->addWidget(quit_button);
-    quitter->addWidget(save_and_quit_button);
+    QHBoxLayout* midder = new QHBoxLayout();
+    midder->addWidget(mark_done_button);
+    midder->addWidget(edit_description_button);
+    midder->addWidget(task_description);
+    midder->addWidget(edit_date_button);
+    midder->addWidget(task_date_selection);
 
-    QVBoxLayout* main_layout = new QVBoxLayout(this);
-    main_layout->addLayout(upper);
-    main_layout->addWidget(table);
-    main_layout->addLayout(quitter);
-
+    QHBoxLayout* downer = new QHBoxLayout();
+    downer->addWidget(quit_button);
+    downer->addWidget(save_and_quit_button);
 
     QWidget* main_widget = new QWidget(this);
+    QVBoxLayout* main_layout = new QVBoxLayout(main_widget);
+    main_layout->addLayout(upper);
+    main_layout->addLayout(midder);
+    main_layout->addWidget(task_count_label);
+    main_layout->addWidget(task_display_table);
+    main_layout->addLayout(downer);
+
     main_widget->setLayout(main_layout);
 
     this->setCentralWidget(main_widget);
@@ -74,11 +105,19 @@ void ListView::connect_slots() {
     connect(add_composite_button, SIGNAL(clicked()),
             this, SLOT(on_add_composite_clicked()));
 
+
     connect(delete_button, SIGNAL(clicked()),
             this, SLOT(on_delete_clicked()));
 
-    connect(edit_button, SIGNAL(clicked()),
-            this, SLOT(on_edit_clicked()));
+
+    connect(edit_name_button, SIGNAL(clicked()),
+            this, SLOT(on_edit_name_clicked()));
+
+    connect(edit_description_button, SIGNAL(clicked()),
+            this, SLOT(on_edit_description_clicked()));
+
+    connect(edit_date_button, SIGNAL(clicked()),
+            this, SLOT(on_edit_date_clicked()));
 
 
     connect(move_to_button, SIGNAL(clicked()),
@@ -97,32 +136,65 @@ void ListView::connect_slots() {
 
 // update methods
 void ListView::sync_with_model() {
-    int l = client->curr_children_list().size();
-    table->setRowCount(l);
-    for(int i = 0; i<l; ++i) {
-        table->setItem(i, 0, new QTableWidgetItem(QString::fromStdString(client->get_child(i)->get_name())));
+    TableRenderer tb;
+    tb.render_model(client, task_display_table);
+    TaskCounter tc;
+    for(auto c : client->curr_children_list()) {
+        c->accept(&tc);
     }
+    std::stringstream label_gen;
+    label_gen<<tc.get_total()<<" : total, "
+             <<tc.get_done()<<" : done, "
+             <<tc.get_todo()<<" : to be done, "
+             <<tc.get_overdue()<<" : overdue";
+    task_count_label->setText(QString::fromStdString(label_gen.str()));
 }
 
 // slots
 // update contents
 void ListView::on_add_leaf_clicked() {
-    // ask controller to update
-    client->add_leaf(line->text().toStdString());
-    line->clear();
+    std::string name = task_name->text().toStdString();
+    std::string description = task_description->text().toStdString();
+
+    Date due_date = Date::from((int)task_date_selection->selectedDate().day(),
+                               (int)task_date_selection->selectedDate().month(),
+                               (int)task_date_selection->selectedDate().year());
+
+    if(due_date.is_void()) {
+        error->showMessage(QString::fromStdString("date is invalid, cannot add task"));
+        return;
+    }
+
+    task_name->clear();
+    task_description->clear();
+
+    client->add_leaf(name, description, due_date);
+
     sync_with_model();
 }
 
 void ListView::on_add_composite_clicked() {
     // ask controller to update
-    client->add_composite(line->text().toStdString());
-    line->clear();
+    std::string name = task_name->text().toStdString();
+    std::string description = task_description->text().toStdString();
+    Date due_date = Date::from(task_date_selection->selectedDate().day(),
+                               task_date_selection->selectedDate().month(),
+                               task_date_selection->selectedDate().year());
+    if(due_date.is_void()) {
+        error->showMessage(QString::fromStdString("date is invalid, cannot add task"));
+        return;
+    }
+
+    task_name->clear();
+    task_description->clear();
+
+    client->add_composite(name, description, due_date);
     sync_with_model();
 }
 
 void ListView::on_delete_clicked() {
-    if(table->selectedItems().size()) {
-        client->remove_child(table->selectedItems()[0]->row());
+    if(task_display_table->selectedItems().size()) {
+        client->remove_child(task_display_table->selectedItems()[0]->row());
         sync_with_model();
     }
     else {
@@ -130,12 +202,44 @@ void ListView::on_delete_clicked() {
     }
 }
 
-void ListView::on_edit_clicked() {
-    if(table->selectedItems().size()) {
-        int selected_index = table->selectedItems()[0]->row();
-        std::string new_text = line->text().toStdString();
+void ListView::on_edit_name_clicked() {
+    if(task_display_table->selectedItems().size()) {
+        int selected_index = task_display_table->selectedItems()[0]->row();
+        std::string new_text = task_name->text().toStdString();
         client->get_child(selected_index)->set_name(new_text);
-        line->clear();
+        task_name->clear();
+        
+        sync_with_model();
+    }
+    else {
+        std::cerr<<"no items selected, cannot edit";
+    }
+}
+
+void ListView::on_edit_description_clicked() {
+    if(task_display_table->selectedItems().size()) {
+        int selected_index = task_display_table->selectedItems()[0]->row();
+        std::string new_text = task_description->text().toStdString();
+        client->get_child(selected_index)->set_description(new_text);
+        task_name->clear();
+        
+        sync_with_model();
+    }
+    else {
+        std::cerr<<"no items selected, cannot edit";
+    }
+}
+
+void ListView::on_edit_date_clicked() {
+    if(task_display_table->selectedItems().size()) {
+        int selected_index = task_display_table->selectedItems()[0]->row();
+        std::string new_text = task_description->text().toStdString();
+        Date selected = Date::from((int)task_date_selection->selectedDate().day(),
+                                   (int)task_date_selection->selectedDate().month(),
+                                   (int)task_date_selection->selectedDate().year());
+
+        client->get_child(selected_index)->set_date(selected);
+        task_name->clear();
         
         sync_with_model();
     }
@@ -146,7 +250,7 @@ void ListView::on_edit_clicked() {
 
 // move around the tree
 void ListView::on_move_to_clicked() {
-    client->go_to_child(table->selectedItems()[0]->row());
+    client->go_to_child(task_display_table->selectedItems()[0]->row());
     sync_with_model();
 }
 
