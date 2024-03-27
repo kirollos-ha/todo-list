@@ -49,7 +49,10 @@ private:
     QTableWidget* task_display_table;
 
     TaskClient* client;
-    QErrorMessage* error;
+    QErrorMessage* nothing_selected_error;
+    QErrorMessage* invalid_date_error;
+    QErrorMessage* cannot_mark_done_error;
+    QErrorMessage* cannot_go_to_leaf_error;
     // init
     void create_widgets();
     void create_other();
@@ -60,6 +63,9 @@ private:
     
     // update methods
     void sync_with_model();
+
+    bool any_selections();
+    int selected_row();
 
 private slots:
     // update slots
@@ -74,6 +80,8 @@ private slots:
 
     void on_move_to_clicked();
     void on_move_up_clicked();
+
+    void on_mark_done_clicked();
 
     void on_quit_clicked();
     void on_save_and_quit_clicked();

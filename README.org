@@ -5,7 +5,7 @@ a simple todo list manager
 ** Dependencies
  - qt5
  - cmake
- - sh (posix shell, linux or macos work)
+ - sh (posix shell, linux or macos work out of the box, we don't talk about windows)
 
 ** Compiling
 in the project root directory (the one you cloned with the ~.git~), run

@@ -11,6 +11,8 @@
 #include <qpushbutton.h>
 #include <qtablewidget.h>
 
+#include "TaskComponent.hpp"
+#include "TaskDoableChecker.hpp"
 #include "View.hpp"
 #include "TableRenderer.hpp"
 #include "../task/TaskCounter.hpp"
@@ -28,7 +30,10 @@ ListView::ListView(TaskClient* client, QWidget *parent)
 }
 
 void ListView::create_other() {
-    error = new QErrorMessage(this);
+    nothing_selected_error = new QErrorMessage(this);
+    invalid_date_error = new QErrorMessage(this);
+    cannot_mark_done_error = new QErrorMessage(this);
+    cannot_go_to_leaf_error = new QErrorMessage(this);
 }
 
 void ListView::configure_other() {
@@ -150,6 +155,14 @@ void ListView::sync_with_model() {
     task_count_label->setText(QString::fromStdString(label_gen.str()));
 }
 
+bool ListView::any_selections() {
+    return task_display_table->selectedItems().size();
+}
+
+int ListView::selected_row() {
+    return task_display_table->selectedItems()[0]->row();
+}
+
 // slots
 // update contents
 void ListView::on_add_leaf_clicked() {
@@ -161,7 +174,7 @@ void ListView::on_add_leaf_clicked() {
                                (int)task_date_selection->selectedDate().year());
 
     if(due_date.is_void()) {
-        error->showMessage(QString::fromStdString("date is invalid, cannot add task"));
+        invalid_date_error->showMessage(QString::fromStdString("date is invalid, cannot add task"));
         return;
     }
 
@@ -181,7 +194,7 @@ void ListView::on_add_composite_clicked() {
                                task_date_selection->selectedDate().month(),
                                task_date_selection->selectedDate().year());
     if(due_date.is_void()) {
-        error->showMessage(QString::fromStdString("date is invalid, cannot add task"));
+        invalid_date_error->showMessage(QString::fromStdString("date is invalid, cannot add task"));
         return;
     }
 
@@ -250,13 +263,37 @@ void ListView::on_edit_date_clicked() {
 
 // move around the tree
 void ListView::on_move_to_clicked() {
-    client->go_to_child(task_display_table->selectedItems()[0]->row());
+    if(!any_selections()) {
+        nothing_selected_error->showMessage("no task selected, cannot move to");
+        return;
+    }
+    int row = selected_row();
+    if(std::dynamic_pointer_cast<TaskComposite>(client->curr_children_list()[row])) {
+       client->go_to_child(selected_row());
+    }
+    else
+        cannot_go_to_leaf_error->showMessage("cannot move to leaf node");
     sync_with_model();
 }
 
 void ListView::on_move_up_clicked() {
     client->go_up();
     sync_with_model();
+}
+
+void ListView::on_mark_done_clicked() {
+    if(!any_selections()) {
+        nothing_selected_error->showMessage("no task selected, cannot move to");
+        return;
+    }
+    auto task = client->curr_children_list()[selected_row()];
+    TaskDoableChecker tdc;
+    if(tdc.is_doable(task.get())) {
+        task->mark_done();
+    }
+    else {
+        cannot_mark_done_error->showMessage("task cannot be completed, unfinished subtasks");
+    }
 }
 
 // die

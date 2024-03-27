@@ -61,6 +61,7 @@ function(test_this)
     test/test_counting.hpp
     test/test_client.hpp
     test/test_serializer.hpp
+    test/test_doable.hpp
   )
 
   add_executable(testexe test/test_main.cpp ${test_tools} ${test_files})

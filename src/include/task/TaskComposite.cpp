@@ -1,6 +1,7 @@
 #include"TaskComposite.hpp"
 #include "TaskComponent.hpp"
 #include "ChildSeeker.hpp"
+#include "TaskDoableChecker.hpp"
 #include <memory>
 
 void TaskComposite::accept(TaskVisitor* v) {

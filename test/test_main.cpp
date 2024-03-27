@@ -4,6 +4,7 @@
 #include"test_client.hpp"
 #include "test_counting.hpp"
 #include "test_serializer.hpp"
+#include "test_doable.hpp"
 
 int main(){
 	std::cout<<"testing...\n";
@@ -12,6 +13,7 @@ int main(){
     test_client();
     test_counting();
     test_serializer();
+    test_doable();
 	if(!exp_failed){
 		std::cout<<"ALL TESTS PASS!\n";
 	}
