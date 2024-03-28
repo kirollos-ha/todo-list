@@ -131,6 +131,9 @@ void ListView::connect_slots() {
     connect(move_up_button, SIGNAL(clicked()),
             this, SLOT(on_move_up_clicked()));
 
+    connect(mark_done_button, SIGNAL(clicked()),
+            this, SLOT(on_mark_done_clicked()));
+
 
     connect(quit_button, SIGNAL(clicked()),
             this, SLOT(on_quit_clicked()));
@@ -216,49 +219,46 @@ void ListView::on_delete_clicked() {
 }
 
 void ListView::on_edit_name_clicked() {
-    if(task_display_table->selectedItems().size()) {
-        int selected_index = task_display_table->selectedItems()[0]->row();
-        std::string new_text = task_name->text().toStdString();
-        client->get_child(selected_index)->set_name(new_text);
-        task_name->clear();
+    if(!any_selections()) {
+        nothing_selected_error->showMessage("no task selected, cannot edit description");
+        return;
+    }
+    int row = selected_row();
+    std::string new_text = task_name->text().toStdString();
+    client->get_child(row)->set_name(new_text);
+    task_name->clear();
         
-        sync_with_model();
-    }
-    else {
-        std::cerr<<"no items selected, cannot edit";
-    }
+    sync_with_model();
 }
 
 void ListView::on_edit_description_clicked() {
-    if(task_display_table->selectedItems().size()) {
-        int selected_index = task_display_table->selectedItems()[0]->row();
-        std::string new_text = task_description->text().toStdString();
-        client->get_child(selected_index)->set_description(new_text);
-        task_name->clear();
+    if(!any_selections()) {
+        nothing_selected_error->showMessage("no task selected, cannot edit description");
+        return;
+    }
+    int row = selected_row();
+    std::string new_text = task_description->text().toStdString();
+    client->get_child(row)->set_description(new_text);
+    task_name->clear();
         
-        sync_with_model();
-    }
-    else {
-        std::cerr<<"no items selected, cannot edit";
-    }
+    sync_with_model();
 }
 
 void ListView::on_edit_date_clicked() {
-    if(task_display_table->selectedItems().size()) {
-        int selected_index = task_display_table->selectedItems()[0]->row();
-        std::string new_text = task_description->text().toStdString();
-        Date selected = Date::from((int)task_date_selection->selectedDate().day(),
-                                   (int)task_date_selection->selectedDate().month(),
-                                   (int)task_date_selection->selectedDate().year());
+    if(!any_selections()) {
+        nothing_selected_error->showMessage("no task selected, cannot edit date");
+        return;
+    }
+    int row = selected_row();
+    std::string new_text = task_description->text().toStdString();
+    Date selected = Date::from((int)task_date_selection->selectedDate().day(),
+                               (int)task_date_selection->selectedDate().month(),
+                               (int)task_date_selection->selectedDate().year());
 
-        client->get_child(selected_index)->set_date(selected);
-        task_name->clear();
+    client->get_child(row)->set_date(selected);
+    task_name->clear();
         
-        sync_with_model();
-    }
-    else {
-        std::cerr<<"no items selected, cannot edit";
-    }
+    sync_with_model();
 }
 
 // move around the tree
@@ -269,7 +269,7 @@ void ListView::on_move_to_clicked() {
     }
     int row = selected_row();
     if(std::dynamic_pointer_cast<TaskComposite>(client->curr_children_list()[row])) {
-       client->go_to_child(selected_row());
+       client->go_to_child(row);
     }
     else
         cannot_go_to_leaf_error->showMessage("cannot move to leaf node");
@@ -290,6 +290,7 @@ void ListView::on_mark_done_clicked() {
     TaskDoableChecker tdc;
     if(tdc.is_doable(task.get())) {
         task->mark_done();
+        sync_with_model();
     }
     else {
         cannot_mark_done_error->showMessage("task cannot be completed, unfinished subtasks");
