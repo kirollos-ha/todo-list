@@ -212,6 +212,8 @@ void ListView::on_delete_clicked() {
     if(task_display_table->selectedItems().size()) {
         client->remove_child(task_display_table->selectedItems()[0]->row());
         sync_with_model();
+        task_name->clear();
+        task_description->clear();
     }
     else {
         std::cerr<<"no items selected, cannot delete"<<std::endl;
@@ -227,6 +229,7 @@ void ListView::on_edit_name_clicked() {
     std::string new_text = task_name->text().toStdString();
     client->get_child(row)->set_name(new_text);
     task_name->clear();
+    task_description->clear();
         
     sync_with_model();
 }
@@ -240,6 +243,7 @@ void ListView::on_edit_description_clicked() {
     std::string new_text = task_description->text().toStdString();
     client->get_child(row)->set_description(new_text);
     task_name->clear();
+    task_description->clear();
         
     sync_with_model();
 }
@@ -257,6 +261,7 @@ void ListView::on_edit_date_clicked() {
 
     client->get_child(row)->set_date(selected);
     task_name->clear();
+    task_description->clear();
         
     sync_with_model();
 }
@@ -270,14 +275,18 @@ void ListView::on_move_to_clicked() {
     int row = selected_row();
     if(std::dynamic_pointer_cast<TaskComposite>(client->curr_children_list()[row])) {
        client->go_to_child(row);
+       task_name->clear();
+       task_description->clear();
+       sync_with_model();
     }
     else
         cannot_go_to_leaf_error->showMessage("cannot move to leaf node");
-    sync_with_model();
 }
 
 void ListView::on_move_up_clicked() {
     client->go_up();
+    task_name->clear();
+    task_description->clear();
     sync_with_model();
 }
 

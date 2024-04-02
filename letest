@@ -1,4 +1,23 @@
-#!/usr/bin/sh
+#!/usr/bin/bash
+
+format-date() {
+	date '+%y-%m-%d--%H-%M-%S-%N'
+}
+
+datestr="$(format-date)"
+
+stdout-log-file-name() {
+	echo "./test/log/stdout/$datestr.log"
+}
+
+stderr-log-file-name() {
+	echo "./test/log/stderr/$datestr.log"
+}
+
+mkdir -p './test/log/stdout'
+mkdir -p './test/log/stderr'
+stdoutlog="$(stdout-log-file-name)"
+stderrlog="$(stderr-log-file-name)"
 
 [[ "$1" == "clean" ]] && (echo "cleaning" && rm -rf test/build/*)
 
@@ -11,6 +30,22 @@ echo "make part"
 cmake --build test/build/
 
 echo "running"
-./test/build/testexe
+./test/build/testexe > "$stdoutlog" 2> "$stderrlog"
 
-echo "done"
+if [[ $? -eq 0 ]]; then
+	echo "success exit, all tests pass"
+	echo "stderr was logged to $stderrlog"
+	echo "stdout was logged to $stdoutlog"
+else
+	echo "error exit, some tests don't pass"
+	echo ""
+	echo "stdout:"
+	cat "$stdoutlog"
+	echo ""
+	echo "stderr:"
+	cat "$stderrlog"
+	echo ""
+	echo "stderr was logged to $stderrlog"
+	echo "stdout was logged to $stdoutlog"
+fi
+
