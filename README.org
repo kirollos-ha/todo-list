@@ -5,10 +5,13 @@ a simple todo list manager
 ** Dependencies
  - qt5
  - cmake
- - sh (posix shell, linux or macos work out of the box, we don't talk about windows)
+ - build and run scripts require ~sh~
+   (posix shell, linux or macos work out of the box)
+ - test script requires ~bash~
+   (and ~date~, but that's usually preinstalled)
 
 ** Compiling
-in the project root directory (the one you cloned with the ~.git~), run
+in the project root directory (the one you cloned with the ~.git/~), run
 #+begin_src sh
 ./lebuild
 #+end_src
@@ -18,12 +21,22 @@ in the project root directory
 #+begin_src sh
 ./letest
 #+end_src
+you can run
+#+begin_src sh
+./letest clean
+#+end_src
+to remove any preexisting compilation artifacts and recompile everything before running the tests 
 
 ** Running the program
-in the project root directory
+in the project root directory run
 #+begin_src sh
 ./lerun
 #+end_src
+or
+#+begin_src sh
+./build/todo
+#+end_src
+(they do the exact same thing, ~./lerun~ is just a more convenient way to do it)
 
 * Features present
  - View and edit todo lists through a graphical user interface
