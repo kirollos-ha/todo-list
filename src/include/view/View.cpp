@@ -34,6 +34,7 @@ void ListView::create_other() {
     invalid_date_error = new QErrorMessage(this);
     cannot_mark_done_error = new QErrorMessage(this);
     cannot_go_to_leaf_error = new QErrorMessage(this);
+    cannot_delete_error = new QErrorMessage(this);
 }
 
 void ListView::configure_other() {
@@ -66,7 +67,11 @@ void ListView::create_widgets() {
 
 void ListView::configure_widgets() {
     lay_widgets_out();
+    QStringList s;
+    s << "name" << "due date" << "description";
     task_display_table->setColumnCount(3);
+    task_display_table->setHorizontalHeaderLabels(s);
+    task_display_table->resizeColumnsToContents();
 }
 
 void ListView::lay_widgets_out() {
@@ -156,14 +161,24 @@ void ListView::sync_with_model() {
              <<tc.get_todo()<<" : to be done, "
              <<tc.get_overdue()<<" : overdue";
     task_count_label->setText(QString::fromStdString(label_gen.str()));
+
+    task_display_table->resizeColumnsToContents();
 }
 
 bool ListView::any_selections() {
     return task_display_table->selectedItems().size();
 }
 
+int min(int a, int b) {
+    return a<b?a:b;
+}
+
 int ListView::selected_row() {
-    return task_display_table->selectedItems()[0]->row();
+    int min_row = INT_MAX;
+    for(auto t : task_display_table->selectedItems()) {
+        min_row = min(min_row, t->row());
+    }
+    return min_row;
 }
 
 // slots
@@ -209,15 +224,14 @@ void ListView::on_add_composite_clicked() {
 }
 
 void ListView::on_delete_clicked() {
-    if(task_display_table->selectedItems().size()) {
-        client->remove_child(task_display_table->selectedItems()[0]->row());
-        sync_with_model();
-        task_name->clear();
-        task_description->clear();
+    if(!any_selections()) {
+        cannot_delete_error->showMessage("no item selected, cannot delete");
+        return;
     }
-    else {
-        std::cerr<<"no items selected, cannot delete"<<std::endl;
-    }
+    client->remove_child(selected_row());
+    sync_with_model();
+    task_name->clear();
+    task_description->clear();
 }
 
 void ListView::on_edit_name_clicked() {

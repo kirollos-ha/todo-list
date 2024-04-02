@@ -53,6 +53,7 @@ private:
     QErrorMessage* invalid_date_error;
     QErrorMessage* cannot_mark_done_error;
     QErrorMessage* cannot_go_to_leaf_error;
+    QErrorMessage* cannot_delete_error;
     // init
     void create_widgets();
     void create_other();
